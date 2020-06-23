@@ -5,7 +5,7 @@ part of masamune.ads;
 /// This handle Admob and Adsense.
 ///
 /// Execute [initialize] to initialize.
-class AdsCore extends Task {
+class AdsCore extends TaskUnit {
   /// Admob application ID.
   String get admobAppId => this._admobAppId;
   String _admobAppId;
