@@ -2,7 +2,7 @@ name: masamune_ads
 description: >-
   Library that provides advertising system of Masamune framework.
   Use Admob etc.
-version: 0.3.0
+version: 0.4.0
 homepage: https://mathru.net
 repository: https://github.com/mathrunet/flutter_masamune_ads
 
@@ -15,8 +15,8 @@ dependencies:
   # Admob
   admob_flutter: ^0.3.4
   # Masamune
-  masamune_core: ^0.3.0
-  masamune_flutter: ^0.3.0
+  masamune_core: ^0.4.0
+  masamune_flutter: ^0.4.0
   masamune_localize: ^0.2.0
 
 dev_dependencies:
