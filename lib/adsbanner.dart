@@ -37,7 +37,7 @@ class AdsBanner extends StatelessWidget {
     } else {
       return AdmobBanner(
           adUnitId: this.admobUnitId,
-          adSize: AdmobBannerSize.LEADERBOARD,
+          adSize: this.admobBannerSize,
           listener: this.admobListener,
           onBannerCreated: this.onAdmobBannerCreated);
     }

@@ -9,6 +9,7 @@
 library masamune.ads;
 
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:masamune_core/masamune_core.dart';
@@ -17,3 +18,4 @@ export 'package:admob_flutter/admob_flutter.dart' show AdmobBannerSize;
 
 part 'adscore.dart';
 part 'adsbanner.dart';
+part 'uibottombanner.dart';
