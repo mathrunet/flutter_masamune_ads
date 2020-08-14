@@ -2,6 +2,8 @@ part of masamune.ads;
 
 /// Display banner ads.
 class AdsBanner extends StatelessWidget {
+  static Map<String, AdmobBanner> _cache = {};
+
   /// Admob advertising ID.
   final String admobUnitId;
 
@@ -35,11 +37,16 @@ class AdsBanner extends StatelessWidget {
     if (Config.isWeb) {
       return Container();
     } else {
-      return AdmobBanner(
-          adUnitId: this.admobUnitId,
-          adSize: this.admobBannerSize,
-          listener: this.admobListener,
-          onBannerCreated: this.onAdmobBannerCreated);
+      if (_cache
+          .containsKey("${this.admobUnitId}${admobBannerSize.toString()}")) {
+        return _cache["${this.admobUnitId}${admobBannerSize.toString()}"];
+      }
+      return _cache["${this.admobUnitId}${admobBannerSize.toString()}"] =
+          AdmobBanner(
+              adUnitId: this.admobUnitId,
+              adSize: this.admobBannerSize,
+              listener: this.admobListener,
+              onBannerCreated: this.onAdmobBannerCreated);
     }
   }
 }
