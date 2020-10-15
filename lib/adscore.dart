@@ -6,10 +6,6 @@ part of masamune.ads;
 ///
 /// Execute [initialize] to initialize.
 class AdsCore extends TaskUnit {
-  /// Admob application ID.
-  String get admobAppId => this._admobAppId;
-  String _admobAppId;
-
   /// Create a Completer that matches the class.
   ///
   /// Do not use from external class
@@ -25,7 +21,9 @@ class AdsCore extends TaskUnit {
   /// [isTemporary]: True if the data is temporary.
   @override
   T createInstance<T extends IClonable>(String path, bool isTemporary) =>
-      AdsCore._(path, admobAppId: this.admobAppId) as T;
+      AdsCore._(
+        path,
+      ) as T;
 
   /// Class for managing ads.
   ///
@@ -33,32 +31,24 @@ class AdsCore extends TaskUnit {
   ///
   /// Execute [initialize] to initialize.
   ///
-  /// [admobAppId]: Admob App ID.
   /// [timeout]: Timeout setting.
-  static Future<AdsCore> initialize(
-      {String admobAppId, Duration timeout = Const.timeout}) {
-    assert(isNotEmpty(admobAppId));
-    if (isEmpty(admobAppId)) {
-      Log.error("The admob app id is invalid.");
-      return Future.delayed(Duration.zero);
-    }
+  static Future<AdsCore> initialize({Duration timeout = Const.timeout}) {
     AdsCore unit = PathMap.get<AdsCore>(_systemPath);
     if (unit != null) return unit.future;
-    unit = AdsCore._(_systemPath, admobAppId: admobAppId);
+    unit = AdsCore._(_systemPath);
     unit._initialize(timeout: timeout);
     return unit.future;
   }
 
-  AdsCore._(String path, {String admobAppId})
-      : this._admobAppId = admobAppId,
-        super(
+  AdsCore._(String path)
+      : super(
             path: path, value: null, isTemporary: false, group: -1, order: 10);
   static const String _systemPath = "system://ads";
   void _initialize({Duration timeout}) async {
     try {
       if (Config.isWeb) {
       } else {
-        if (isNotEmpty(this.admobAppId)) Admob.initialize(this.admobAppId);
+        Admob.initialize();
       }
       this.done();
     } catch (e) {
