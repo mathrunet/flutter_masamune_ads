@@ -1,3 +1,9 @@
+## [0.8.3] - Update README (2021.07.01)
+
+* Support for Null-safety.
+* Support for katana package.
+* Package updates.
+
 ## [0.6.2] - Update README (2021.01.19)
 
 * Move core functionality to the masamune package

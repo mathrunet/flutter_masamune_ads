@@ -6,16 +6,23 @@
 ///
 /// [mathru.net]: https://mathru.net
 /// [YouTube]: https://www.youtube.com/c/mathrunetchannel
-library masamune.ads;
+library masamune_ads;
 
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:admob_flutter/admob_flutter.dart';
-import 'package:masamune_core/masamune_core.dart';
-export 'package:masamune_flutter/masamune_flutter.dart';
-export 'package:admob_flutter/admob_flutter.dart' show AdmobBannerSize;
 
-part 'adscore.dart';
-part 'adsbanner.dart';
-part 'uibottombanner.dart';
+import 'package:masamune/masamune.dart';
+
+import 'others/others.dart'
+    if (dart.library.io) 'mobile/mobile.dart'
+    if (dart.library.js) 'others/others.dart'
+    if (dart.library.html) 'others/others.dart';
+
+export 'package:masamune/masamune.dart';
+
+export 'others/others.dart'
+    if (dart.library.io) 'mobile/mobile.dart'
+    if (dart.library.js) 'others/others.dart'
+    if (dart.library.html) 'others/others.dart';
+
+part 'src/ads_size.dart';
+part 'src/ui_bottom_banner.dart';
