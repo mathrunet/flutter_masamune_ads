@@ -40,7 +40,11 @@ class _AdsBannerState extends State<AdsBanner> {
   /// [context]: Build Context.
   @override
   Widget build(BuildContext context) {
-    return AdWidget(ad: _bannerAd);
+    final version = Config.androidDeviceInfo?.version.sdkInt;
+    return _CustomAdWidget(
+      ad: _bannerAd,
+      useVirtualDisplay: version != null && version >= 29,
+    );
   }
 }
 
@@ -80,5 +84,99 @@ class _AdsBannerCacheManager {
     } else {
       _bannerAdCache[contextId] = [banner];
     }
+  }
+}
+
+class _CustomAdWidget extends StatefulWidget {
+  const _CustomAdWidget(
+      {Key? key, required this.ad, this.useVirtualDisplay = false})
+      : super(key: key);
+
+  final AdWithView ad;
+  final bool useVirtualDisplay;
+
+  @override
+  _CustomAdWidgetState createState() => _CustomAdWidgetState();
+}
+
+class _CustomAdWidgetState extends State<_CustomAdWidget> {
+  bool _adIdAlreadyMounted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final adId = instanceManager.adIdFor(widget.ad);
+    if (adId == null) {
+      return;
+    }
+    if (instanceManager.isWidgetAdIdMounted(adId)) {
+      _adIdAlreadyMounted = true;
+    }
+    instanceManager.mountWidgetAdId(adId);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    final adId = instanceManager.adIdFor(widget.ad);
+    if (adId == null) {
+      return;
+    }
+    instanceManager.unmountWidgetAdId(adId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_adIdAlreadyMounted) {
+      throw FlutterError.fromParts(<DiagnosticsNode>[
+        ErrorSummary('This AdWidget is already in the Widget tree'),
+        ErrorHint(
+            'If you placed this AdWidget in a list, make sure you create a new instance '
+            'in the builder function with a unique ad object.'),
+        ErrorHint(
+            'Make sure you are not using the same ad object in more than one AdWidget.'),
+      ]);
+    }
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      if (widget.useVirtualDisplay) {
+        return AndroidView(
+          viewType: '${instanceManager.channel.name}/ad_widget',
+          creationParamsCodec: const StandardMessageCodec(),
+          creationParams: instanceManager.adIdFor(widget.ad),
+          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+        );
+      } else {
+        return PlatformViewLink(
+          viewType: '${instanceManager.channel.name}/ad_widget',
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
+            return AndroidViewSurface(
+              controller: controller as AndroidViewController,
+              gestureRecognizers: const <
+                  Factory<OneSequenceGestureRecognizer>>{},
+              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+            );
+          },
+          onCreatePlatformView: (PlatformViewCreationParams params) {
+            return PlatformViewsService.initSurfaceAndroidView(
+              id: params.id,
+              viewType: '${instanceManager.channel.name}/ad_widget',
+              layoutDirection: TextDirection.ltr,
+              creationParams: instanceManager.adIdFor(widget.ad),
+              // ignore: prefer_const_constructors
+              creationParamsCodec: StandardMessageCodec(),
+            )
+              ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+              ..create();
+          },
+        );
+      }
+    }
+
+    return UiKitView(
+      viewType: '${instanceManager.channel.name}/ad_widget',
+      creationParams: instanceManager.adIdFor(widget.ad),
+      creationParamsCodec: const StandardMessageCodec(),
+    );
   }
 }
